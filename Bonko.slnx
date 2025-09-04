@@ -1,3 +1,4 @@
 <Solution>
   <Project Path="Bonko/Bonko.csproj" />
+  <Project Path="Core/Logic.csproj" Id="b61cf0de-990c-4c57-91ab-66b4d71ddef9" />
 </Solution>

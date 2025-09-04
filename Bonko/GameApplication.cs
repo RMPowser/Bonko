@@ -1,19 +1,15 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Logic;
 
 namespace Bonko;
 
-public class GameApplication : Game
+public class GameApplication : Core
 {
-    private GraphicsDeviceManager _graphics;
-    private SpriteBatch _spriteBatch;
-
     public GameApplication()
+        : base("Bonko", 320, 176, false)
     {
-        _graphics = new GraphicsDeviceManager(this);
-        Content.RootDirectory = "Content";
-        IsMouseVisible = false;
     }
 
     protected override void Initialize()
@@ -25,7 +21,7 @@ public class GameApplication : Game
 
     protected override void LoadContent()
     {
-        _spriteBatch = new SpriteBatch(GraphicsDevice);
+        base.LoadContent();
 
         // TODO: use this.Content to load your game content here
     }
