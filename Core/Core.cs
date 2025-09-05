@@ -7,66 +7,73 @@ namespace Logic;
 
 public class Core : Game
 {
-    internal static Core instance;
+	internal static Core instance;
 
-    public static Core Instance => instance;
+	public static Core Instance => instance;
 
-    public static GraphicsDeviceManager Graphics { get; private set; }
+	public static GraphicsDeviceManager Graphics { get; private set; }
 
-    // new intentionally shadows base.GraphicsDevice. so we can do Core.GraphicsDevice statically instead of Core.Instance.GraphicsDevice.
-    public static new GraphicsDevice GraphicsDevice { get; private set; }
+	// new intentionally shadows base.GraphicsDevice. so we can do Core.GraphicsDevice statically instead of Core.Instance.GraphicsDevice.
+	public static new GraphicsDevice GraphicsDevice { get; private set; }
 
-    public static SpriteBatch SpriteBatch { get; private set; }
+	public static SpriteBatch SpriteBatch { get; private set; }
 
-    // new intentionally shadows base.Content. so we can do Core.GraphicsDevice statically instead of Core.Instance.GraphicsDevice.
-    public static new ContentManager Content { get; private set; }
+	// new intentionally shadows base.Content. so we can do Core.GraphicsDevice statically instead of Core.Instance.GraphicsDevice.
+	public static new ContentManager Content { get; private set; }
 
-    public Core(string title, int width, int height, bool fullScreen)
-    {
-        // Ensure that multiple cores are not created.
-        if (instance != null)
-        {
-            throw new InvalidOperationException($"Only a single {nameof(Core)} instance can be created");
-        }
+	public static Vector2 NativeResolution { get; private set; }
 
-        // Store reference to engine for global member access.
-        instance = this;
+	public Core(string title, int nativeWidth, int nativeHeight, bool fullScreen, bool vsync)
+	{
+		// Ensure that multiple cores are not created.
+		if (instance != null)
+		{
+			throw new InvalidOperationException($"Only a single {nameof(Core)} instance can be created");
+		}
 
-        // Create a new graphics device manager.
-        Graphics = new GraphicsDeviceManager(this)
-        {
-            // Set the graphics defaults.
-            PreferredBackBufferWidth = width,
-            PreferredBackBufferHeight = height,
-            IsFullScreen = fullScreen
-        };
+		// Store reference to engine for global member access.
+		instance = this;
 
-        // Apply the graphic presentation changes.
-        Graphics.ApplyChanges();
+		NativeResolution = new Vector2(nativeWidth, nativeHeight);
 
-        // Set the window title.
-        Window.Title = title;
+		// Create a new graphics device manager.
+		Graphics = new GraphicsDeviceManager(this);
 
-        // Set the core's content manager to a reference of the base Game's
-        // content manager.
-        Content = base.Content;
+		// Set the graphics defaults.
+		Graphics.PreferredBackBufferWidth = (int)NativeResolution.X;
+		Graphics.PreferredBackBufferHeight = (int)NativeResolution.Y;
+		Graphics.IsFullScreen = fullScreen;
+		Graphics.SynchronizeWithVerticalRetrace = vsync;
+		Graphics.HardwareModeSwitch = false;
 
-        // Set the root directory for content.
-        Content.RootDirectory = "Content";
+		// Apply the graphic presentation changes.
+		Graphics.ApplyChanges();
 
-        // Mouse is invisible by default.
-        IsMouseVisible = false;
-    }
+		// Set the window title.
+		Window.Title = title;
+		Window.AllowAltF4 = true;
+		Window.AllowUserResizing = false;
 
-    protected override void Initialize()
-    {
-        base.Initialize();
+		// Set the core's content manager to a reference of the base Game's
+		// content manager.
+		Content = base.Content;
 
-        // Set the core's graphics device to a reference of the base Game's
-        // graphics device.
-        GraphicsDevice = base.GraphicsDevice;
+		// Set the root directory for content.
+		Content.RootDirectory = "Content";
 
-        // Create the sprite batch instance.
-        SpriteBatch = new SpriteBatch(GraphicsDevice);
-    }
+		// Mouse is invisible by default.
+		IsMouseVisible = false;
+	}
+
+	protected override void Initialize()
+	{
+		base.Initialize();
+
+		// Set the core's graphics device to a reference of the base Game's
+		// graphics device.
+		GraphicsDevice = base.GraphicsDevice;
+
+		// Create the sprite batch instance.
+		SpriteBatch = new SpriteBatch(GraphicsDevice);
+	}
 }
