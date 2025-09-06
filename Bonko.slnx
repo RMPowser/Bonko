@@ -1,4 +1,5 @@
 <Solution>
   <Project Path="Bonko/Bonko.csproj" />
+  <Project Path="Input/Input.csproj" />
   <Project Path="Logic/Logic.csproj" />
 </Solution>

@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Logic;
+using Input;
 
 namespace Bonko;
 
@@ -42,13 +43,17 @@ public class GameApplication : Core
 
 	protected override void Update(GameTime gameTime)
 	{
-		if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
+		InputInfo.Update();
+
+		if (InputInfo.WasButtonJustPressed(Buttons.Back) || InputInfo.WasKeyJustPressed(Keys.Escape))
 			Exit();
-		if (Keyboard.GetState().IsKeyDown(Keys.OemPlus))
+		
+		if (InputInfo.WasKeyJustPressed(Keys.OemPlus))
 		{
 			IncreaseGameScale();
 		}
-		if (Keyboard.GetState().IsKeyDown(Keys.OemMinus))
+
+		if (InputInfo.WasKeyJustPressed(Keys.OemMinus))
 		{
 			DecreaseGameScale();
 		}
