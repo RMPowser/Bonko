@@ -8,22 +8,28 @@ namespace Bonko;
 public class GameApplication : Core
 {
 	private Texture2D _logo;
+	private RenderTarget2D _nativeRenderTarget;
+	private Rectangle _actualScreenRectangle;
 	private int _gameScale;
-	private int _minGameScale;
-	private int _maxGameScale;
+	private const int _minGameScale = 1;
+	private const int _maxGameScale = 10;
+	private const int _defaultGameScale = 4;
+	public const int NativeResolutionWidth = 320;
+	public const int NativeResolutionHeight = 176;
+
 	public GameApplication()
-		: base("Bonko", 320, 176, false, true)
+		: base("Bonko", NativeResolutionWidth, NativeResolutionHeight, false, true)
 	{
 		_gameScale = 1;
-		_minGameScale = 1;
-		_maxGameScale = 10;
 	}
 
 	protected override void Initialize()
 	{
 		// TODO: Add your initialization logic here
-
 		base.Initialize();
+
+		_nativeRenderTarget = new RenderTarget2D(GraphicsDevice, NativeResolutionWidth, NativeResolutionHeight);
+		SetDefaultGameScale();
 	}
 
 	protected override void LoadContent()
@@ -54,13 +60,18 @@ public class GameApplication : Core
 
 	protected override void Draw(GameTime gameTime)
 	{
+		// first render the game at native res
+		GraphicsDevice.SetRenderTarget(_nativeRenderTarget);
 		GraphicsDevice.Clear(Color.CornflowerBlue);
-
-		// TODO: Add your drawing code here
-		SpriteBatch.Begin(samplerState: SamplerState.PointClamp);
-
+		SpriteBatch.Begin();
 		SpriteBatch.Draw(_logo, Vector2.Zero, Color.White);
+		SpriteBatch.End();
 
+		// then draw it scaled up to the size of the backbuffer
+		GraphicsDevice.SetRenderTarget(null);
+		GraphicsDevice.Clear(Color.Black);
+		SpriteBatch.Begin(samplerState: SamplerState.PointClamp);
+		SpriteBatch.Draw(_nativeRenderTarget, _actualScreenRectangle, Color.White);
 		SpriteBatch.End();
 
 		base.Draw(gameTime);
@@ -73,10 +84,9 @@ public class GameApplication : Core
 		{
 			_gameScale = _maxGameScale;
 		}
-		Graphics.PreferredBackBufferWidth = (int)NativeResolution.X * _gameScale;
-		Graphics.PreferredBackBufferHeight = (int)NativeResolution.Y * _gameScale;
-		Graphics.ApplyChanges();
+		ApplyGameScale();
 	}
+
 	protected void DecreaseGameScale()
 	{
 		_gameScale--;
@@ -84,8 +94,20 @@ public class GameApplication : Core
 		{
 			_gameScale = _minGameScale;
 		}
-		Graphics.PreferredBackBufferWidth = (int)NativeResolution.X * _gameScale;
-		Graphics.PreferredBackBufferHeight = (int)NativeResolution.Y * _gameScale;
+		ApplyGameScale();
+	}
+
+	protected void SetDefaultGameScale()
+	{
+		_gameScale = _defaultGameScale;
+		ApplyGameScale();
+	}
+
+	protected void ApplyGameScale()
+	{
+		_actualScreenRectangle = new Rectangle(0, 0, NativeResolutionWidth * _gameScale, NativeResolutionHeight * _gameScale);
+		Graphics.PreferredBackBufferWidth = _actualScreenRectangle.Width;
+		Graphics.PreferredBackBufferHeight = _actualScreenRectangle.Height;
 		Graphics.ApplyChanges();
 	}
 }

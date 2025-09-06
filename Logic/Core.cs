@@ -21,9 +21,8 @@ public class Core : Game
 	// new intentionally shadows base.Content. so we can do Core.GraphicsDevice statically instead of Core.Instance.GraphicsDevice.
 	public static new ContentManager Content { get; private set; }
 
-	public static Vector2 NativeResolution { get; private set; }
 
-	public Core(string title, int nativeWidth, int nativeHeight, bool fullScreen, bool vsync)
+	public Core(string title, int width, int height, bool fullScreen, bool vsync)
 	{
 		// Ensure that multiple cores are not created.
 		if (instance != null)
@@ -34,14 +33,12 @@ public class Core : Game
 		// Store reference to engine for global member access.
 		instance = this;
 
-		NativeResolution = new Vector2(nativeWidth, nativeHeight);
-
 		// Create a new graphics device manager.
 		Graphics = new GraphicsDeviceManager(this);
 
 		// Set the graphics defaults.
-		Graphics.PreferredBackBufferWidth = (int)NativeResolution.X;
-		Graphics.PreferredBackBufferHeight = (int)NativeResolution.Y;
+		Graphics.PreferredBackBufferWidth = width;
+		Graphics.PreferredBackBufferHeight = height;
 		Graphics.IsFullScreen = fullScreen;
 		Graphics.SynchronizeWithVerticalRetrace = vsync;
 		Graphics.HardwareModeSwitch = false;
