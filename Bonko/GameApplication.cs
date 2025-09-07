@@ -55,12 +55,12 @@ public class GameApplication : Core
 		if (InputInfo.WasButtonJustPressed(Buttons.Back) || InputInfo.WasKeyJustPressed(Keys.Escape))
 			Exit();
 		
-		if (InputInfo.WasKeyJustPressed(Keys.OemPlus))
+		if (InputInfo.WasKeyJustPressed(Keys.OemPlus) && !Graphics.IsFullScreen)
 		{
 			IncreaseGameScale();
 		}
 
-		if (InputInfo.WasKeyJustPressed(Keys.OemMinus))
+		if (InputInfo.WasKeyJustPressed(Keys.OemMinus) && !Graphics.IsFullScreen)
 		{
 			DecreaseGameScale();
 		}
