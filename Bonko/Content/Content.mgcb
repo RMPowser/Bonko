@@ -25,3 +25,9 @@
 /processorParam:TextureFormat=Color
 /build:images/logo.png
 
+#begin shaders/PixelFilter.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/processorParam:DebugMode=Auto
+/build:shaders/PixelFilter.fx
+

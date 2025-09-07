@@ -11,6 +11,8 @@ public class GameApplication : Core
 	private Texture2D Logo;
 	private RenderTarget2D NativeRenderTarget;
 	private Rectangle ActualScreenRectangle;
+	private bool UsePixelFiltering;
+	private Effect PixelFilterShader;
 	private int GameScale;
 	private const int MinGameScale = 1;
 	private const int MaxGameScale = 10;
@@ -23,12 +25,12 @@ public class GameApplication : Core
 	{
 		IsFixedTimeStep = false;
 		Window.AllowUserResizing = true;
+		UsePixelFiltering = true;
 		GameScale = 1;
 	}
 
 	protected override void Initialize()
 	{
-		// TODO: Add your initialization logic here
 		base.Initialize();
 
 		NativeRenderTarget = new RenderTarget2D(GraphicsDevice, NativeResolutionWidth, NativeResolutionHeight);
@@ -41,8 +43,9 @@ public class GameApplication : Core
 	{
 		base.LoadContent();
 
-		// TODO: use this.Content to load your game content here
 		Logo = Content.Load<Texture2D>("images/logo");
+		PixelFilterShader = Content.Load<Effect>("shaders/PixelFilter");
+		PixelFilterShader.Parameters["SourceSize"].SetValue(new Vector2(NativeResolutionWidth, NativeResolutionHeight));
 	}
 
 	protected override void Update(GameTime gameTime)
@@ -72,7 +75,11 @@ public class GameApplication : Core
 			Graphics.ApplyChanges();
 		}
 
-		// TODO: Add your update logic here
+		if (InputInfo.WasKeyJustPressed(Keys.F12))
+		{
+			UsePixelFiltering = !UsePixelFiltering;
+		}
+
 
 		base.Update(gameTime);
 	}
@@ -89,7 +96,7 @@ public class GameApplication : Core
 		// then draw it scaled up to the size of the backbuffer
 		GraphicsDevice.SetRenderTarget(null);
 		GraphicsDevice.Clear(Color.Black);
-		SpriteBatch.Begin(samplerState: SamplerState.PointClamp);
+		SpriteBatch.Begin(samplerState: SamplerState.PointClamp, effect: UsePixelFiltering ? PixelFilterShader : null);
 		SpriteBatch.Draw(NativeRenderTarget, ActualScreenRectangle, Color.White);
 		SpriteBatch.End();
 
@@ -128,6 +135,8 @@ public class GameApplication : Core
 		Graphics.PreferredBackBufferWidth = ActualScreenRectangle.Width;
 		Graphics.PreferredBackBufferHeight = ActualScreenRectangle.Height;
 		Graphics.ApplyChanges();
+
+		PixelFilterShader.Parameters["OutputSize"].SetValue(new Vector2(ActualScreenRectangle.Width, ActualScreenRectangle.Height));
 	}
 	
 	private void Window_ClientSizeChanged(object sender, System.EventArgs e)
