@@ -8,20 +8,22 @@ namespace Bonko;
 
 public class GameApplication : Core
 {
-	private Texture2D _logo;
-	private RenderTarget2D _nativeRenderTarget;
-	private Rectangle _actualScreenRectangle;
-	private int _gameScale;
-	private const int _minGameScale = 1;
-	private const int _maxGameScale = 10;
-	private const int _defaultGameScale = 4;
+	private Texture2D Logo;
+	private RenderTarget2D NativeRenderTarget;
+	private Rectangle ActualScreenRectangle;
+	private int GameScale;
+	private const int MinGameScale = 1;
+	private const int MaxGameScale = 10;
+	private const int DefaultGameScale = 4;
 	public const int NativeResolutionWidth = 320;
 	public const int NativeResolutionHeight = 176;
 
 	public GameApplication()
 		: base("Bonko", NativeResolutionWidth, NativeResolutionHeight, false, true)
 	{
-		_gameScale = 1;
+		IsFixedTimeStep = false;
+		Window.AllowUserResizing = true;
+		GameScale = 1;
 	}
 
 	protected override void Initialize()
@@ -29,8 +31,10 @@ public class GameApplication : Core
 		// TODO: Add your initialization logic here
 		base.Initialize();
 
-		_nativeRenderTarget = new RenderTarget2D(GraphicsDevice, NativeResolutionWidth, NativeResolutionHeight);
+		NativeRenderTarget = new RenderTarget2D(GraphicsDevice, NativeResolutionWidth, NativeResolutionHeight);
 		SetDefaultGameScale();
+
+		Window.ClientSizeChanged += Window_ClientSizeChanged;
 	}
 
 	protected override void LoadContent()
@@ -38,7 +42,7 @@ public class GameApplication : Core
 		base.LoadContent();
 
 		// TODO: use this.Content to load your game content here
-		_logo = Content.Load<Texture2D>("images/logo");
+		Logo = Content.Load<Texture2D>("images/logo");
 	}
 
 	protected override void Update(GameTime gameTime)
@@ -58,6 +62,16 @@ public class GameApplication : Core
 			DecreaseGameScale();
 		}
 
+		if (InputInfo.WasKeyJustPressed(Keys.F11))
+		{
+			Graphics.IsFullScreen = !Graphics.IsFullScreen;
+			if (!Graphics.IsFullScreen)
+			{
+				ApplyGameScale();
+			}
+			Graphics.ApplyChanges();
+		}
+
 		// TODO: Add your update logic here
 
 		base.Update(gameTime);
@@ -66,17 +80,17 @@ public class GameApplication : Core
 	protected override void Draw(GameTime gameTime)
 	{
 		// first render the game at native res
-		GraphicsDevice.SetRenderTarget(_nativeRenderTarget);
+		GraphicsDevice.SetRenderTarget(NativeRenderTarget);
 		GraphicsDevice.Clear(Color.CornflowerBlue);
 		SpriteBatch.Begin();
-		SpriteBatch.Draw(_logo, Vector2.Zero, Color.White);
+		SpriteBatch.Draw(Logo, Vector2.Zero, Color.White);
 		SpriteBatch.End();
 
 		// then draw it scaled up to the size of the backbuffer
 		GraphicsDevice.SetRenderTarget(null);
 		GraphicsDevice.Clear(Color.Black);
 		SpriteBatch.Begin(samplerState: SamplerState.PointClamp);
-		SpriteBatch.Draw(_nativeRenderTarget, _actualScreenRectangle, Color.White);
+		SpriteBatch.Draw(NativeRenderTarget, ActualScreenRectangle, Color.White);
 		SpriteBatch.End();
 
 		base.Draw(gameTime);
@@ -84,35 +98,46 @@ public class GameApplication : Core
 
 	protected void IncreaseGameScale()
 	{
-		_gameScale++;
-		if (_gameScale > _maxGameScale)
+		GameScale++;
+		if (GameScale > MaxGameScale)
 		{
-			_gameScale = _maxGameScale;
+			GameScale = MaxGameScale;
 		}
 		ApplyGameScale();
 	}
 
 	protected void DecreaseGameScale()
 	{
-		_gameScale--;
-		if (_gameScale < _minGameScale)
+		GameScale--;
+		if (GameScale < MinGameScale)
 		{
-			_gameScale = _minGameScale;
+			GameScale = MinGameScale;
 		}
 		ApplyGameScale();
 	}
 
 	protected void SetDefaultGameScale()
 	{
-		_gameScale = _defaultGameScale;
+		GameScale = DefaultGameScale;
 		ApplyGameScale();
 	}
 
 	protected void ApplyGameScale()
 	{
-		_actualScreenRectangle = new Rectangle(0, 0, NativeResolutionWidth * _gameScale, NativeResolutionHeight * _gameScale);
-		Graphics.PreferredBackBufferWidth = _actualScreenRectangle.Width;
-		Graphics.PreferredBackBufferHeight = _actualScreenRectangle.Height;
+		ActualScreenRectangle = new Rectangle(0, 0, NativeResolutionWidth * GameScale, NativeResolutionHeight * GameScale);
+		Graphics.PreferredBackBufferWidth = ActualScreenRectangle.Width;
+		Graphics.PreferredBackBufferHeight = ActualScreenRectangle.Height;
 		Graphics.ApplyChanges();
+	}
+	
+	private void Window_ClientSizeChanged(object sender, System.EventArgs e)
+	{
+		Window.ClientSizeChanged -= Window_ClientSizeChanged;
+		ActualScreenRectangle = new Rectangle(0, 0, Window.ClientBounds.Width, Window.ClientBounds.Height);
+		Graphics.PreferredBackBufferWidth = ActualScreenRectangle.Width;
+		Graphics.PreferredBackBufferHeight = ActualScreenRectangle.Height;
+		
+		Graphics.ApplyChanges();
+		Window.ClientSizeChanged += Window_ClientSizeChanged;
 	}
 }
