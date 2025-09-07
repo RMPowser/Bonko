@@ -90,7 +90,21 @@ public class GameApplication : Core
 		GraphicsDevice.SetRenderTarget(NativeRenderTarget);
 		GraphicsDevice.Clear(Color.CornflowerBlue);
 		SpriteBatch.Begin();
-		SpriteBatch.Draw(Logo, Vector2.Zero, Color.White);
+		SpriteBatch.Draw(
+			Logo,				// texture
+			new Vector2(        // position
+				(NativeRenderTarget.Width * 0.5f),
+				(NativeRenderTarget.Height * 0.5f)),
+			null,               // sourceRectangle
+			Color.White,        // color
+			0.0f,               // rotation
+			new Vector2(		// origin
+				Logo.Width * 0.5f,
+				Logo.Height * 0.5f),
+			0.5f,               // scale
+			SpriteEffects.None, // effects
+			0.0f                // layerDepth
+		);
 		SpriteBatch.End();
 
 		// then draw it scaled up to the size of the backbuffer
