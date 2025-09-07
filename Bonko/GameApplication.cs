@@ -9,6 +9,7 @@ namespace Bonko;
 public class GameApplication : Core
 {
 	private Texture2D Logo;
+	private float LogoRotation;
 	private RenderTarget2D NativeRenderTarget;
 	private Rectangle ActualScreenRectangle;
 	private bool UsePixelFiltering;
@@ -27,6 +28,7 @@ public class GameApplication : Core
 		Window.AllowUserResizing = true;
 		UsePixelFiltering = true;
 		GameScale = 1;
+		LogoRotation = 0;
 	}
 
 	protected override void Initialize()
@@ -50,6 +52,17 @@ public class GameApplication : Core
 
 	protected override void Update(GameTime gameTime)
 	{
+		float dTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
+		float rotSpeed = 180;
+		if (dTime > 0)
+		{
+			LogoRotation += rotSpeed * dTime;
+		}
+		if (LogoRotation > 360)
+		{
+			LogoRotation -= 360;
+		}
+
 		InputInfo.Update();
 
 		if (InputInfo.WasButtonJustPressed(Buttons.Back) || InputInfo.WasKeyJustPressed(Keys.Escape))
@@ -80,7 +93,6 @@ public class GameApplication : Core
 			UsePixelFiltering = !UsePixelFiltering;
 		}
 
-
 		base.Update(gameTime);
 	}
 
@@ -96,8 +108,8 @@ public class GameApplication : Core
 				(NativeRenderTarget.Width * 0.5f),
 				(NativeRenderTarget.Height * 0.5f)),
 			null,               // sourceRectangle
-			Color.White,        // color
-			0.0f,               // rotation
+			Color.White * 0.5f,        // color
+			MathHelper.ToRadians(LogoRotation),               // rotation
 			new Vector2(		// origin
 				Logo.Width * 0.5f,
 				Logo.Height * 0.5f),
