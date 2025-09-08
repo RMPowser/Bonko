@@ -4,25 +4,27 @@ using System.Collections.Generic;
 using System;
 using System.IO;
 using System.Text.Json.Nodes;
-using System.Text.Json;
 
 namespace Graphics
 {
 	public class TextureAtlas
 	{
 		internal Dictionary<string, TextureRegion> Regions;
+		internal Dictionary<string, Animation> Animations;
 		public Texture2D Texture { get; set; }
 
 
 		public TextureAtlas()
 		{
 			Regions = [];
+			Animations = [];
 		}
 
 		public TextureAtlas(Texture2D texture)
 		{
 			Texture = texture;
 			Regions = [];
+			Animations = [];
 		}
 
 		public void AddRegion(string name, int x, int y, int width, int height)
@@ -40,15 +42,37 @@ namespace Graphics
 			return Regions.Remove(name);
 		}
 
+		public void AddAnimation(string name, Animation animatedSprite)
+		{
+			Animations.Add(name, animatedSprite);
+		}
+
+		public Animation GetAnimation(string name)
+		{
+			return Animations[name];
+		}
+
+		public bool RemoveAnimation(string name)
+		{
+			return Animations.Remove(name);
+		}
+
 		public void Clear()
 		{
 			Regions.Clear();
+			Animations.Clear();
 		}
 
 		public Sprite CreateSprite(string regionName)
 		{
 			TextureRegion region = GetRegion(regionName);
 			return new Sprite(region);
+		}
+
+		public AnimatedSprite CreateAnimatedSprite(string animationName)
+		{
+			Animation animation = GetAnimation(animationName);
+			return new AnimatedSprite(animation);
 		}
 
 		public static TextureAtlas FromAsepriteJsonFile(ContentManager content, string fileName)
@@ -91,7 +115,23 @@ namespace Graphics
 					frame["frame"]["h"].GetValue<int>()
 				);
 			}
-			
+
+			var animations = file["meta"]["frameTags"].AsArray();
+			foreach (var anim in animations)
+			{
+				Animation spr = new();
+				int from = anim["from"].GetValue<int>();
+				int to = anim["to"].GetValue<int>();
+				string name = anim["name"].GetValue<string>();
+				for (int i = from; i <= to; i++)
+				{
+					string key = name + "_" + i.ToString();
+					spr.Frames.Add(atlas.GetRegion(key));
+				}
+
+				atlas.AddAnimation(name, spr);
+			}
+
 			return atlas;
 		}
 	}

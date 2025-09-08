@@ -9,7 +9,7 @@ namespace Bonko;
 
 public class GameApplication : Core
 {
-	private Sprite Bonko;
+	private AnimatedSprite Bonko;
 	private RenderTarget2D NativeRenderTarget;
 	private Rectangle ActualScreenRectangle;
 	private bool UsePixelFiltering;
@@ -48,9 +48,7 @@ public class GameApplication : Core
 		PixelFilterShader.Parameters["SourceSize"].SetValue(new Vector2(NativeResolutionWidth, NativeResolutionHeight));
 
 		TextureAtlas atlas = TextureAtlas.FromAsepriteJsonFile(Content, @"sprites\player\Bonko_Idle.json");
-		Bonko = atlas.CreateSprite("Idle_0");
-		Bonko.Scale = new Vector2(2.0f);
-		Bonko.Rotation = MathHelper.ToRadians(35.0f);
+		Bonko = atlas.CreateAnimatedSprite("Idle");
 		Bonko.Origin = new Vector2(24, 47);
 		Bonko.Position = new Vector2(100, 100);
 	}
@@ -86,6 +84,8 @@ public class GameApplication : Core
 		{
 			UsePixelFiltering = !UsePixelFiltering;
 		}
+
+		Bonko.Update(gameTime);
 
 		base.Update(gameTime);
 	}

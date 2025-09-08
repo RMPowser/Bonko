@@ -9,18 +9,16 @@ namespace Graphics
 		public Rectangle SourceRectangle { get; set; }
 		public int Width => SourceRectangle.Width;
 		public int Height => SourceRectangle.Height;
-		public float Duration { get; set; } /// in seconds
 
 
 		public TextureRegion()
 		{
 		}
 
-		public TextureRegion(Texture2D texture, int x, int y, int width, int height, float duration = 0)
+		public TextureRegion(Texture2D texture, int x, int y, int width, int height)
 		{
 			Texture = texture;
 			SourceRectangle = new Rectangle(x, y, width, height);
-			Duration = duration;
 		}
 
 		public void Draw(
