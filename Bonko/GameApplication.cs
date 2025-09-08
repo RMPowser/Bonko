@@ -3,13 +3,13 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Logic;
 using Input;
+using Graphics;
 
 namespace Bonko;
 
 public class GameApplication : Core
 {
-	private Texture2D Logo;
-	private float LogoRotation;
+	private Sprite Bonko;
 	private RenderTarget2D NativeRenderTarget;
 	private Rectangle ActualScreenRectangle;
 	private bool UsePixelFiltering;
@@ -28,7 +28,6 @@ public class GameApplication : Core
 		Window.AllowUserResizing = true;
 		UsePixelFiltering = true;
 		GameScale = 1;
-		LogoRotation = 0;
 	}
 
 	protected override void Initialize()
@@ -45,24 +44,19 @@ public class GameApplication : Core
 	{
 		base.LoadContent();
 
-		Logo = Content.Load<Texture2D>("images/logo");
 		PixelFilterShader = Content.Load<Effect>("shaders/PixelFilter");
 		PixelFilterShader.Parameters["SourceSize"].SetValue(new Vector2(NativeResolutionWidth, NativeResolutionHeight));
+
+		TextureAtlas atlas = TextureAtlas.FromAsepriteJsonFile(Content, @"sprites\player\Bonko_Idle.json");
+		Bonko = atlas.CreateSprite("Idle_0");
+		Bonko.Scale = new Vector2(2.0f);
+		Bonko.Rotation = MathHelper.ToRadians(35.0f);
+		Bonko.Origin = new Vector2(24, 47);
+		Bonko.Position = new Vector2(100, 100);
 	}
 
 	protected override void Update(GameTime gameTime)
 	{
-		float dTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
-		float rotSpeed = 180;
-		if (dTime > 0)
-		{
-			LogoRotation += rotSpeed * dTime;
-		}
-		if (LogoRotation > 360)
-		{
-			LogoRotation -= 360;
-		}
-
 		InputInfo.Update();
 
 		if (InputInfo.WasButtonJustPressed(Buttons.Back) || InputInfo.WasKeyJustPressed(Keys.Escape))
@@ -101,22 +95,8 @@ public class GameApplication : Core
 		// first render the game at native res
 		GraphicsDevice.SetRenderTarget(NativeRenderTarget);
 		GraphicsDevice.Clear(Color.CornflowerBlue);
-		SpriteBatch.Begin();
-		SpriteBatch.Draw(
-			Logo,				// texture
-			new Vector2(        // position
-				(NativeRenderTarget.Width * 0.5f),
-				(NativeRenderTarget.Height * 0.5f)),
-			null,               // sourceRectangle
-			Color.White * 0.5f,        // color
-			MathHelper.ToRadians(LogoRotation),               // rotation
-			new Vector2(		// origin
-				Logo.Width * 0.5f,
-				Logo.Height * 0.5f),
-			0.5f,               // scale
-			SpriteEffects.None, // effects
-			0.0f                // layerDepth
-		);
+		SpriteBatch.Begin(samplerState: SamplerState.PointClamp, sortMode: SpriteSortMode.FrontToBack);
+		Bonko.Draw(SpriteBatch);
 		SpriteBatch.End();
 
 		// then draw it scaled up to the size of the backbuffer

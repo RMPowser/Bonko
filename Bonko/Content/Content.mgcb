@@ -13,7 +13,16 @@
 
 #---------------------------------- Content ---------------------------------#
 
-#begin images/logo.png
+#begin shaders/PixelFilter.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/processorParam:DebugMode=Auto
+/build:shaders/PixelFilter.fx
+
+#begin sprites/player/Bonko_Idle.json
+/copy:sprites/player/Bonko_Idle.json
+
+#begin sprites/player/Bonko_Idle.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -23,11 +32,5 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:images/logo.png
-
-#begin shaders/PixelFilter.fx
-/importer:EffectImporter
-/processor:EffectProcessor
-/processorParam:DebugMode=Auto
-/build:shaders/PixelFilter.fx
+/build:sprites/player/Bonko_Idle.png
 
