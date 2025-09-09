@@ -42,6 +42,7 @@ public class Core : Game
 		Graphics.IsFullScreen = fullScreen;
 		Graphics.SynchronizeWithVerticalRetrace = vsync;
 		Graphics.HardwareModeSwitch = false;
+		Graphics.GraphicsProfile = GraphicsProfile.HiDef;
 
 		// Apply the graphic presentation changes.
 		Graphics.ApplyChanges();
