@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Input;
 using Logic;
 using Input;
 using Graphics;
+using System;
 
 namespace Bonko;
 
@@ -11,12 +12,12 @@ public class GameApplication : Core
 {
 	private AnimatedSprite Bonko;
 	private RenderTarget2D NativeRenderTarget;
-	private Rectangle ActualScreenRectangle;
+	private Rectangle GameClientArea;
 	private bool UsePixelFiltering;
 	private Effect PixelFilterShader;
 	private int GameScale;
 	private const int MinGameScale = 1;
-	private const int MaxGameScale = 10;
+	private int MaxGameScale = 10;
 	private const int DefaultGameScale = 4;
 	public const int NativeResolutionWidth = 320;
 	public const int NativeResolutionHeight = 176;
@@ -35,7 +36,9 @@ public class GameApplication : Core
 		base.Initialize();
 
 		NativeRenderTarget = new RenderTarget2D(GraphicsDevice, NativeResolutionWidth, NativeResolutionHeight);
-		SetDefaultGameScale();
+
+		DetermineMaxGameScale();
+		SetGameScaleToDefault();
 
 		Window.ClientSizeChanged += Window_ClientSizeChanged;
 	}
@@ -75,6 +78,7 @@ public class GameApplication : Core
 			Graphics.IsFullScreen = !Graphics.IsFullScreen;
 			if (!Graphics.IsFullScreen)
 			{
+				SetGameScaleToDefault();
 				ApplyGameScale();
 			}
 			Graphics.ApplyChanges();
@@ -103,7 +107,7 @@ public class GameApplication : Core
 		GraphicsDevice.SetRenderTarget(null);
 		GraphicsDevice.Clear(Color.Black);
 		SpriteBatch.Begin(samplerState: SamplerState.PointClamp, effect: UsePixelFiltering ? PixelFilterShader : null);
-		SpriteBatch.Draw(NativeRenderTarget, ActualScreenRectangle, Color.White);
+		SpriteBatch.Draw(NativeRenderTarget, GameClientArea, Color.White);
 		SpriteBatch.End();
 
 		base.Draw(gameTime);
@@ -129,30 +133,38 @@ public class GameApplication : Core
 		ApplyGameScale();
 	}
 
-	protected void SetDefaultGameScale()
+	protected void DetermineMaxGameScale()
+	{
+		var screenRes = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode;
+		int shortestDimension = MathHelper.Min(screenRes.Width, screenRes.Height);
+		MaxGameScale = shortestDimension / (shortestDimension == screenRes.Width ? NativeResolutionWidth : NativeResolutionHeight);
+	}
+
+	protected void SetGameScaleToDefault()
 	{
 		GameScale = DefaultGameScale;
 		ApplyGameScale();
 	}
 
-	protected void ApplyGameScale()
+	protected void ApplyGameScale(Rectangle? newActualScreenRect = null)
 	{
-		ActualScreenRectangle = new Rectangle(0, 0, NativeResolutionWidth * GameScale, NativeResolutionHeight * GameScale);
-		Graphics.PreferredBackBufferWidth = ActualScreenRectangle.Width;
-		Graphics.PreferredBackBufferHeight = ActualScreenRectangle.Height;
+		GameClientArea = newActualScreenRect ?? new(0, 0, NativeResolutionWidth * GameScale, NativeResolutionHeight * GameScale);
+		Graphics.PreferredBackBufferWidth = GameClientArea.Width;
+		Graphics.PreferredBackBufferHeight = GameClientArea.Height;
 		Graphics.ApplyChanges();
 
-		PixelFilterShader.Parameters["OutputSize"].SetValue(new Vector2(ActualScreenRectangle.Width, ActualScreenRectangle.Height));
+		PixelFilterShader.Parameters["OutputSize"].SetValue(new Vector2(GameClientArea.Width, GameClientArea.Height));
 	}
 	
 	private void Window_ClientSizeChanged(object sender, System.EventArgs e)
 	{
 		Window.ClientSizeChanged -= Window_ClientSizeChanged;
-		ActualScreenRectangle = new Rectangle(0, 0, Window.ClientBounds.Width, Window.ClientBounds.Height);
-		Graphics.PreferredBackBufferWidth = ActualScreenRectangle.Width;
-		Graphics.PreferredBackBufferHeight = ActualScreenRectangle.Height;
-		
-		Graphics.ApplyChanges();
+
+		var clientBounds = Window.ClientBounds;
+		int shortestDimension = MathHelper.Min(clientBounds.Width, clientBounds.Height);
+		GameScale = shortestDimension / (shortestDimension == GameClientArea.Width ? NativeResolutionWidth : NativeResolutionHeight);
+		ApplyGameScale(new Rectangle(0, 0, clientBounds.Width, clientBounds.Height));
+
 		Window.ClientSizeChanged += Window_ClientSizeChanged;
 	}
 }
