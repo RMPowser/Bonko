@@ -34,6 +34,11 @@ namespace Input
 
 		static public void Update()
 		{
+			if (states.Count <= 0)
+			{
+				return;
+			}
+
 			for (PlayerIndex i = 0; i < states.Keys.Last() + 1; i++)
 			{
 				if (states.TryGetValue(i, out GamePadStatePair state))
