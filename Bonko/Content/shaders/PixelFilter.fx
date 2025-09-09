@@ -3,8 +3,8 @@
 	#define VS_SHADERMODEL vs_3_0
 	#define PS_SHADERMODEL ps_3_0
 #else
-	#define VS_SHADERMODEL vs_4_0_level_9_1
-	#define PS_SHADERMODEL ps_4_0_level_9_1
+	#define VS_SHADERMODEL vs_4_0_level_9_3
+	#define PS_SHADERMODEL ps_4_0_level_9_3
 #endif
 
 float2 SourceSize; // input texture resolution (width, height)
@@ -16,7 +16,14 @@ sampler2D SourceSampler = sampler_state
 	Texture = <Source>;
 };
 
-float4 MainPS(float2 texCoord : TEXCOORD) : COLOR
+struct VertexShaderOutput
+{
+    float4 position : SV_POSITION;
+    float4 color : COLOR0;
+    float2 texCoord : TEXCOORD0;
+};
+
+float4 MainPS(VertexShaderOutput input) : COLOR
 {
 	float2 texelSize = 1 / SourceSize.xy;
 
@@ -27,10 +34,10 @@ float4 MainPS(float2 texCoord : TEXCOORD) : COLOR
 	
 	range = range / 2.0 * 0.999;
 
-	float left   = texCoord.x - range.x;
-	float top    = texCoord.y + range.y;
-	float right  = texCoord.x + range.x;
-	float bottom = texCoord.y - range.y;
+	float left   = input.texCoord.x - range.x;
+	float top    = input.texCoord.y + range.y;
+	float right  = input.texCoord.x + range.x;
+	float bottom = input.texCoord.y - range.y;
 	
 	float3 topLeftColor     = tex2D(SourceSampler, (floor(float2(left, top)     / texelSize) + 0.5 ) * texelSize).rgb;
 	float3 bottomRightColor = tex2D(SourceSampler, (floor(float2(right, bottom) / texelSize) + 0.5 ) * texelSize).rgb;
@@ -38,7 +45,7 @@ float4 MainPS(float2 texCoord : TEXCOORD) : COLOR
 	float3 topRightColor	= tex2D(SourceSampler, (floor(float2(right, top)	/ texelSize) + 0.5 ) * texelSize).rgb;
 
 	float2 border = clamp(
-		round(texCoord / texelSize) * texelSize,
+		round(input.texCoord / texelSize) * texelSize,
 		float2(left, bottom),
 		float2(right, top)
 	);
