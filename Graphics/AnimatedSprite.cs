@@ -29,7 +29,7 @@ namespace Graphics
 			Animation = animation;
 		}
 
-		public void Update(GameTime gameTime)
+		public override void Update(GameTime gameTime)
 		{
 			_elapsedTime += gameTime.ElapsedGameTime;
 

@@ -1,11 +1,15 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using System.Linq;
+
+using LDtk;
 
 namespace Graphics
 {
-	public class Tilemap
+	public class TileMap
 	{
-		private readonly Tileset Tileset;
+		private readonly TileSet Tileset;
 		private readonly int[] Tiles;
 		public int Rows { get; }
 		public int Columns { get; }
@@ -15,7 +19,7 @@ namespace Graphics
 		public float TileHeight => Tileset.TileHeight * Scale.Y;
 
 
-		public Tilemap(Tileset tileset, int columns, int rows)
+		public TileMap(TileSet tileset, int columns, int rows)
 		{
 			Tileset = tileset;
 			Rows = rows;
@@ -60,6 +64,15 @@ namespace Graphics
 				Vector2 position = new(x * TileWidth, y * TileHeight);
 				tile.Draw(spriteBatch, position, Color.White, 0.0f, Vector2.Zero, Scale, SpriteEffects.None, 1.0f);
 			}
+		}
+
+		public static TileMap FromLDtkJsonFile(ContentManager content, string filePath)
+		{
+			LDtkFile file = content.Load<LDtkFile>(filePath);
+
+
+
+			return new TileMap(new TileSet(new TextureRegion(), 16, 16), 3, 3);
 		}
 	}
 }

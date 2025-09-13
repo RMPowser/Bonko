@@ -80,16 +80,16 @@ namespace Graphics
 			filePath = filePath.Replace('\\', '/');
 
 			string contentStr = "./Content/";
-			string jsonExt = ".json";
+			string fileExt = ".json";
 
 			if (!filePath.StartsWith(contentStr))
 			{
 				filePath = contentStr + filePath;
 			}
 
-			if (!filePath.EndsWith(jsonExt))
+			if (!filePath.EndsWith(fileExt))
 			{
-				filePath += jsonExt;
+				filePath += fileExt;
 			}
 
 			var file = JsonNode.Parse(File.ReadAllText(filePath)) 
@@ -132,7 +132,7 @@ namespace Graphics
 				string name = anim["name"].GetValue<string>();
 				for (int i = from; i <= to; i++)
 				{
-					string key = name + "_" + i.ToString();
+					string key = name + "_" + (i - from).ToString();
 					spr.Frames.Add(atlas.GetRegion(key));
 				}
 

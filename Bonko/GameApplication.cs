@@ -4,12 +4,14 @@ using Microsoft.Xna.Framework.Input;
 using Logic;
 using Input;
 using Graphics;
-using System;
 
 namespace Bonko;
 
 public class GameApplication : Core
 {
+	private World World;
+	private Room CurrRoom;
+	private Room? NextRoom;
 	private AnimatedSprite Bonko;
 	private RenderTarget2D NativeRenderTarget;
 	private Rectangle GameClientArea;
@@ -41,6 +43,9 @@ public class GameApplication : Core
 		SetGameScaleToDefault();
 
 		Window.ClientSizeChanged += Window_ClientSizeChanged;
+		World = new World();
+		CurrRoom = World.GetRoom("MainDeck_0");
+		CurrRoom.Load();
 	}
 
 	protected override void LoadContent()
@@ -50,10 +55,10 @@ public class GameApplication : Core
 		PixelFilterShader = Content.Load<Effect>("shaders/PixelFilter");
 		PixelFilterShader.Parameters["SourceSize"].SetValue(new Vector2(NativeResolutionWidth, NativeResolutionHeight));
 
-		TextureAtlas atlas = TextureAtlas.FromAsepriteJsonFile(Content, "sprites/player/Bonko_Idle.json");
-		Bonko = atlas.CreateAnimatedSprite("Idle");
-		Bonko.Origin = new Vector2(24, 47);
-		Bonko.Position = new Vector2(100, 100);
+		//TextureAtlas atlas = TextureAtlas.FromAsepriteJsonFile(Content, "sprites/player/Bonko_Idle.json");
+		//Bonko = atlas.CreateAnimatedSprite("Idle");
+		//Bonko.Origin = new Vector2(24, 47);
+		//Bonko.Position = new Vector2(100, 100);
 	}
 
 	protected override void Update(GameTime gameTime)
@@ -89,7 +94,15 @@ public class GameApplication : Core
 			UsePixelFiltering = !UsePixelFiltering;
 		}
 
-		Bonko.Update(gameTime);
+		if (NextRoom != null)
+		{
+			CurrRoom.Unload();
+			CurrRoom = NextRoom;
+			NextRoom = null;
+		}
+
+		CurrRoom.Update(gameTime);
+		//Bonko.Update(gameTime);
 
 		base.Update(gameTime);
 	}
@@ -100,7 +113,8 @@ public class GameApplication : Core
 		GraphicsDevice.SetRenderTarget(NativeRenderTarget);
 		GraphicsDevice.Clear(Color.CornflowerBlue);
 		SpriteBatch.Begin(samplerState: SamplerState.PointClamp, sortMode: SpriteSortMode.FrontToBack);
-		Bonko.Draw(SpriteBatch);
+		CurrRoom.Draw(SpriteBatch);
+		//Bonko.Draw(SpriteBatch);
 		SpriteBatch.End();
 
 		// then draw it scaled up to the size of the backbuffer

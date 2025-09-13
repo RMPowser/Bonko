@@ -7,6 +7,8 @@ namespace Logic;
 
 public class Core : Game
 {
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
+	
 	internal static Core instance;
 
 	public static Core Instance => instance;
@@ -21,6 +23,9 @@ public class Core : Game
 	// new intentionally shadows base.Content. so we can do Core.GraphicsDevice statically instead of Core.Instance.GraphicsDevice.
 	public static new ContentManager Content { get; private set; }
 
+#pragma warning restore CS8618 
+
+
 
 	public Core(string title, int width, int height, bool fullScreen, bool vsync)
 	{
@@ -34,15 +39,16 @@ public class Core : Game
 		instance = this;
 
 		// Create a new graphics device manager.
-		Graphics = new GraphicsDeviceManager(this);
-
-		// Set the graphics defaults.
-		Graphics.PreferredBackBufferWidth = width;
-		Graphics.PreferredBackBufferHeight = height;
-		Graphics.IsFullScreen = fullScreen;
-		Graphics.SynchronizeWithVerticalRetrace = vsync;
-		Graphics.HardwareModeSwitch = false;
-		Graphics.GraphicsProfile = GraphicsProfile.HiDef;
+		Graphics = new(this)
+		{
+			// Set the graphics defaults.
+			PreferredBackBufferWidth = width,
+			PreferredBackBufferHeight = height,
+			IsFullScreen = fullScreen,
+			SynchronizeWithVerticalRetrace = vsync,
+			HardwareModeSwitch = false,
+			GraphicsProfile = GraphicsProfile.HiDef
+		};
 
 		// Apply the graphic presentation changes.
 		Graphics.ApplyChanges();

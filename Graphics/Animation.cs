@@ -12,7 +12,7 @@ namespace Graphics
 
 		public Animation()
 		{
-			Frames = new List<TextureRegion>();
+			Frames = [];
 			MillisecondsBetweenFrames = TimeSpan.FromMilliseconds(100);
 		}
 

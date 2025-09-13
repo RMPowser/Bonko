@@ -30,7 +30,12 @@ namespace Graphics
 			Origin = new Vector2(Region.Width, Region.Height) * 0.5f;
 		}
 
-		public void Draw(SpriteBatch spriteBatch)
+		public virtual void Update(GameTime gameTime)
+		{
+
+		}
+
+		public virtual void Draw(SpriteBatch spriteBatch)
 		{
 			Region.Draw(spriteBatch, Position, Color, Rotation, Origin, Scale, Effects, Depth);
 		}

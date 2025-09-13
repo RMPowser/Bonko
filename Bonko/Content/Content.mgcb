@@ -10,8 +10,17 @@
 
 #-------------------------------- References --------------------------------#
 
+/reference:C:\Users\rprya\.nuget\packages\ldtkmonogame.contentpipeline\1.8.0\lib\net8.0\LDtk.ContentPipeline.dll
 
 #---------------------------------- Content ---------------------------------#
+
+#begin ../../../BonkoAssets/sprites/TileSets/GenericBlocks/collision/collision.json
+/copy:../../../BonkoAssets/sprites/TileSets/GenericBlocks/collision/collision.json;sprites/TileSets/GenericBlocks/collision/collision.json
+
+#begin levels/BonkoWorld.ldtk
+/importer:LDtkFileImporter
+/processor:LDtkFileProcessor
+/build:levels/BonkoWorld.ldtk
 
 #begin shaders/PixelFilter.fx
 /importer:EffectImporter
@@ -19,10 +28,7 @@
 /processorParam:DebugMode=Auto
 /build:shaders/PixelFilter.fx
 
-#begin sprites/player/Bonko_Idle.json
-/copy:sprites/player/Bonko_Idle.json
-
-#begin sprites/player/Bonko_Idle.png
+#begin sprites/TileSets/GenericBlocks/collision/collision.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -32,5 +38,5 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:sprites/player/Bonko_Idle.png
+/build:sprites/TileSets/GenericBlocks/collision/collision.png;sprites/TileSets/GenericBlocks/collision/collision
 

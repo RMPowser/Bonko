@@ -1,7 +1,7 @@
 ﻿
 namespace Graphics
 {
-	public class Tileset
+	public class TileSet
 	{
 		private readonly TextureRegion[] Tiles;
 		public int TileWidth { get; }
@@ -11,7 +11,7 @@ namespace Graphics
 		public int Count { get; }
 
 
-		public Tileset(TextureRegion textureRegion, int tileWidth, int tileHeight)
+		public TileSet(TextureRegion textureRegion, int tileWidth, int tileHeight)
 		{
 			TileWidth = tileWidth;
 			TileHeight = tileHeight;
