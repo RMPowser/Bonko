@@ -75,29 +75,36 @@ namespace Graphics
 			return new AnimatedSprite(animation);
 		}
 
-		public static TextureAtlas FromAsepriteJsonFile(ContentManager content, string fileName)
+		public static TextureAtlas FromAsepriteJsonFile(ContentManager content, string filePath)
 		{
-			
-			if (!fileName.StartsWith(@".\Content\"))
+			filePath = filePath.Replace('\\', '/');
+
+			string contentStr = "./Content/";
+			string jsonExt = ".json";
+
+			if (!filePath.StartsWith(contentStr))
 			{
-				fileName = @".\Content\" + fileName;
+				filePath = contentStr + filePath;
 			}
 
-			if (!fileName.EndsWith(@".json"))
+			if (!filePath.EndsWith(jsonExt))
 			{
-				fileName += ".json";
+				filePath += jsonExt;
 			}
 
-			var file = JsonNode.Parse(File.ReadAllText(fileName)) 
-				?? throw new Exception($"Unable to parse json file: \"{fileName}\"");
+			var file = JsonNode.Parse(File.ReadAllText(filePath)) 
+				?? throw new Exception($"Unable to parse json file: \"{filePath}\"");
 
 			string imagePath = file["meta"]["image"].GetValue<string>();
 			while (Path.HasExtension(imagePath))
 			{
 				imagePath = imagePath[..imagePath.LastIndexOf('.')];
 			}
-			string sub = fileName[@".\Content\".Length..fileName.LastIndexOf('\\')];
-			imagePath = Path.Combine(sub, imagePath);
+
+			int begin = contentStr.Length;
+			int end = filePath.LastIndexOf('/');
+			string sub = filePath[begin..end];
+			imagePath = sub + '/' + imagePath;
 
 			TextureAtlas atlas = new()
 			{

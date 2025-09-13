@@ -50,7 +50,7 @@ public class GameApplication : Core
 		PixelFilterShader = Content.Load<Effect>("shaders/PixelFilter");
 		PixelFilterShader.Parameters["SourceSize"].SetValue(new Vector2(NativeResolutionWidth, NativeResolutionHeight));
 
-		TextureAtlas atlas = TextureAtlas.FromAsepriteJsonFile(Content, @"sprites\player\Bonko_Idle.json");
+		TextureAtlas atlas = TextureAtlas.FromAsepriteJsonFile(Content, "sprites/player/Bonko_Idle.json");
 		Bonko = atlas.CreateAnimatedSprite("Idle");
 		Bonko.Origin = new Vector2(24, 47);
 		Bonko.Position = new Vector2(100, 100);
