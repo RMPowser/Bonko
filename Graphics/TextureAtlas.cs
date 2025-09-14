@@ -14,69 +14,11 @@ namespace Graphics
 		public Texture2D Texture { get; set; }
 
 
-		public TextureAtlas()
+		public TextureAtlas(ContentManager content, string filePath)
 		{
 			Regions = [];
 			Animations = [];
-		}
 
-		public TextureAtlas(Texture2D texture)
-		{
-			Texture = texture;
-			Regions = [];
-			Animations = [];
-		}
-
-		public void AddRegion(string name, int x, int y, int width, int height)
-		{
-			Regions.Add(name, new TextureRegion(Texture, x, y, width, height));
-		}
-
-		public TextureRegion GetRegion(string name)
-		{
-			return Regions[name];
-		}
-
-		public bool RemoveRegion(string name)
-		{
-			return Regions.Remove(name);
-		}
-
-		public void AddAnimation(string name, Animation animatedSprite)
-		{
-			Animations.Add(name, animatedSprite);
-		}
-
-		public Animation GetAnimation(string name)
-		{
-			return Animations[name];
-		}
-
-		public bool RemoveAnimation(string name)
-		{
-			return Animations.Remove(name);
-		}
-
-		public void Clear()
-		{
-			Regions.Clear();
-			Animations.Clear();
-		}
-
-		public Sprite CreateSprite(string regionName)
-		{
-			TextureRegion region = GetRegion(regionName);
-			return new Sprite(region);
-		}
-
-		public AnimatedSprite CreateAnimatedSprite(string animationName)
-		{
-			Animation animation = GetAnimation(animationName);
-			return new AnimatedSprite(animation);
-		}
-
-		public static TextureAtlas FromAsepriteJsonFile(ContentManager content, string filePath)
-		{
 			filePath = filePath.Replace('\\', '/');
 
 			string contentStr = "./Content/";
@@ -92,7 +34,7 @@ namespace Graphics
 				filePath += fileExt;
 			}
 
-			var file = JsonNode.Parse(File.ReadAllText(filePath)) 
+			var file = JsonNode.Parse(File.ReadAllText(filePath))
 				?? throw new Exception($"Unable to parse json file: \"{filePath}\"");
 
 			string imagePath = file["meta"]["image"].GetValue<string>();
@@ -106,15 +48,12 @@ namespace Graphics
 			string sub = filePath[begin..end];
 			imagePath = sub + '/' + imagePath;
 
-			TextureAtlas atlas = new()
-			{
-				Texture = content.Load<Texture2D>(imagePath)
-			};
+			Texture = content.Load<Texture2D>(imagePath);
 
 			var frames = file["frames"].AsArray();
 			foreach (var frame in frames)
 			{
-				atlas.AddRegion(
+				AddRegion(
 					frame["filename"].GetValue<string>(),
 					frame["frame"]["x"].GetValue<int>(),
 					frame["frame"]["y"].GetValue<int>(),
@@ -133,13 +72,58 @@ namespace Graphics
 				for (int i = from; i <= to; i++)
 				{
 					string key = name + "_" + (i - from).ToString();
-					spr.Frames.Add(atlas.GetRegion(key));
+					spr.Frames.Add(GetRegion(key));
 				}
 
-				atlas.AddAnimation(name, spr);
+				AddAnimation(name, spr);
 			}
+		}
 
-			return atlas;
+
+		public void AddRegion(string name, int x, int y, int width, int height)
+		{
+			Regions.Add(name, new TextureRegion(Texture, x, y, width, height));
+		}
+
+		public TextureRegion GetRegion(string name)
+		{
+			return Regions[name];
+		}
+
+		public bool RemoveRegion(string name)
+		{
+			return Regions.Remove(name);
+		}
+
+		public Dictionary<string, TextureRegion>GetAllRegions()
+		{
+			return Regions;
+		}
+
+		public void AddAnimation(string name, Animation animatedSprite)
+		{
+			Animations.Add(name, animatedSprite);
+		}
+
+		public Animation GetAnimation(string name)
+		{
+			return Animations[name];
+		}
+
+		public bool RemoveAnimation(string name)
+		{
+			return Animations.Remove(name);
+		}
+
+		public Dictionary<string, Animation> GetAllAnimations()
+		{
+			return Animations;
+		}
+
+		public void Clear()
+		{
+			Regions.Clear();
+			Animations.Clear();
 		}
 	}
 }

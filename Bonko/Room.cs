@@ -30,49 +30,30 @@ namespace Bonko
 			{
 				foreach (var layer in LayersOnDisk)
 				{
-					Layers.Add(new Layer(layer._Identifier, WorldPosition, layer.EntityInstances));
+					Layers.Add(new Layer(layer._Identifier, WorldPosition, 0, layer.EntityInstances));
 				}
 			}
 
 			IsLoaded = true;
 		}
 
+		public virtual void AddObject(Entity obj, string layerName)
+		{
+			Layer layer = Layers.Find(x => x.Name == layerName) 
+				?? throw new Exception($"No layer found with name \"{layerName}\".");
+
+			layer.AddObject(obj);
+		}
+
 		public virtual void Unload()
 		{
+			foreach (var layer in Layers)
+			{
+				layer.Unload();
+			}
+
 			Layers = [];
 			IsLoaded = false;
-		}
-
-		public virtual void AddObject(Entity obj)
-		{
-			Layer? layer = Layers.Find(x => x.Name == obj.LayerName);
-
-			if (layer == null)
-				throw new Exception($"No layer found with name \"{obj.LayerName}\".");
-
-			layer?.AddObject(obj);
-		}
-
-		public virtual void Update(GameTime gameTime)
-		{
-			if (IsLoaded)
-			{
-				foreach (var layer in Layers)
-				{
-					layer.Update(gameTime);
-				}
-			}
-		}
-
-		public virtual void Draw(SpriteBatch spriteBatch) 
-		{
-			if (IsLoaded)
-			{
-				foreach (var layer in Layers)
-				{
-					layer.Draw(spriteBatch);
-				}
-			}
 		}
 	}
 }

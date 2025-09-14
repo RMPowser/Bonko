@@ -2,17 +2,17 @@
 using System;
 using System.Collections.Generic;
 using LDtk;
+using Logic;
 
 namespace Bonko
 {
-	public class Level
+	public class Level : Entity
 	{
-		public string Name { get; }
 		private List<Room> Rooms;
 		
 		public Level(string name, LDtkLevel[] rooms)
+			: base(name)
 		{
-			Name = name;
 			Rooms = [];
 
 			foreach (var room in rooms)
@@ -23,13 +23,19 @@ namespace Bonko
 
 		public Room GetRoom(string name)
 		{
-			Room? r = Rooms.Find(x => x.Name == name);
-			if (r != null)
+			return Rooms.Find(x => x.Name == name) 
+				?? throw new Exception($"Room not found with name \"{name}\".");
+		}
+
+		public override void Unload()
+		{
+			foreach (var room in Rooms)
 			{
-				return r;
+				room.Unload();
 			}
 
-			throw new Exception($"Room not found with name \"{name}\".");
+			Rooms = [];
+			base.Unload();
 		}
 	}
 }

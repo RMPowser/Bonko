@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Input;
 using Logic;
 using Input;
 using Graphics;
+using Logic.ComponentSystems;
 
 namespace Bonko;
 
@@ -12,7 +13,6 @@ public class GameApplication : Core
 	private World World;
 	private Room CurrRoom;
 	private Room? NextRoom;
-	private AnimatedSprite Bonko;
 	private RenderTarget2D NativeRenderTarget;
 	private Rectangle GameClientArea;
 	private bool UsePixelFiltering;
@@ -24,7 +24,9 @@ public class GameApplication : Core
 	public const int NativeResolutionWidth = 320;
 	public const int NativeResolutionHeight = 176;
 
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
 	public GameApplication()
+#pragma warning restore CS8618
 		: base("Bonko", NativeResolutionWidth, NativeResolutionHeight, false, true)
 	{
 		IsFixedTimeStep = false;
@@ -42,7 +44,7 @@ public class GameApplication : Core
 		DetermineMaxGameScale();
 		SetGameScaleToDefault();
 
-		Window.ClientSizeChanged += Window_ClientSizeChanged;
+		Window.ClientSizeChanged += Window_ClientSizeChanged!;
 		World = new World();
 		CurrRoom = World.GetRoom("MainDeck_0");
 		CurrRoom.Load();
@@ -54,11 +56,6 @@ public class GameApplication : Core
 
 		PixelFilterShader = Content.Load<Effect>("shaders/PixelFilter");
 		PixelFilterShader.Parameters["SourceSize"].SetValue(new Vector2(NativeResolutionWidth, NativeResolutionHeight));
-
-		//TextureAtlas atlas = TextureAtlas.FromAsepriteJsonFile(Content, "sprites/player/Bonko_Idle.json");
-		//Bonko = atlas.CreateAnimatedSprite("Idle");
-		//Bonko.Origin = new Vector2(24, 47);
-		//Bonko.Position = new Vector2(100, 100);
 	}
 
 	protected override void Update(GameTime gameTime)
@@ -94,15 +91,23 @@ public class GameApplication : Core
 			UsePixelFiltering = !UsePixelFiltering;
 		}
 
+		if (InputInfo.WasKeyJustPressed(Keys.F5))
+		{
+			string currRoomName = CurrRoom.Name;
+			World.Reload();
+			CurrRoom = World.GetRoom(currRoomName);
+			CurrRoom.Load();
+		}
+
 		if (NextRoom != null)
 		{
 			CurrRoom.Unload();
 			CurrRoom = NextRoom;
 			NextRoom = null;
+			CurrRoom.Load();
 		}
 
-		CurrRoom.Update(gameTime);
-		//Bonko.Update(gameTime);
+		UpdateableComponentSystem.Update(gameTime);
 
 		base.Update(gameTime);
 	}
@@ -113,8 +118,7 @@ public class GameApplication : Core
 		GraphicsDevice.SetRenderTarget(NativeRenderTarget);
 		GraphicsDevice.Clear(Color.CornflowerBlue);
 		SpriteBatch.Begin(samplerState: SamplerState.PointClamp, sortMode: SpriteSortMode.FrontToBack);
-		CurrRoom.Draw(SpriteBatch);
-		//Bonko.Draw(SpriteBatch);
+		DrawableComponentSystem.Draw(SpriteBatch);
 		SpriteBatch.End();
 
 		// then draw it scaled up to the size of the backbuffer
@@ -172,13 +176,13 @@ public class GameApplication : Core
 	
 	private void Window_ClientSizeChanged(object sender, System.EventArgs e)
 	{
-		Window.ClientSizeChanged -= Window_ClientSizeChanged;
+		Window.ClientSizeChanged -= Window_ClientSizeChanged!;
 
 		var clientBounds = Window.ClientBounds;
 		int shortestDimension = MathHelper.Min(clientBounds.Width, clientBounds.Height);
 		GameScale = shortestDimension / (shortestDimension == GameClientArea.Width ? NativeResolutionWidth : NativeResolutionHeight);
 		ApplyGameScale(new Rectangle(0, 0, clientBounds.Width, clientBounds.Height));
 
-		Window.ClientSizeChanged += Window_ClientSizeChanged;
+		Window.ClientSizeChanged += Window_ClientSizeChanged!;
 	}
 }

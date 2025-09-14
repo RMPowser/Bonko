@@ -10,16 +10,10 @@ namespace Graphics
 		public List<TextureRegion> Frames {  get; set; }
 		public TimeSpan MillisecondsBetweenFrames { get; set; }
 
-		public Animation()
+		public Animation(List<TextureRegion>? frames = null, TimeSpan? millisecondsBetweenFrames = null)
 		{
-			Frames = [];
-			MillisecondsBetweenFrames = TimeSpan.FromMilliseconds(100);
-		}
-
-		public Animation(List<TextureRegion> frames, TimeSpan millisecondsBetweenFrames)
-		{
-			Frames = frames;
-			MillisecondsBetweenFrames = millisecondsBetweenFrames;
+			Frames = frames ?? [];
+			MillisecondsBetweenFrames = millisecondsBetweenFrames ?? TimeSpan.FromMilliseconds(100);
 		}
 	}
 }

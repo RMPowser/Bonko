@@ -1,4 +1,7 @@
 <Solution>
+  <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
+  </Folder>
   <Project Path="Bonko/Bonko.csproj" />
   <Project Path="Graphics/Graphics.csproj" />
   <Project Path="Input/Input.csproj" />

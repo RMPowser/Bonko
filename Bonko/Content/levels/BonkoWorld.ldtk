@@ -11,7 +11,7 @@
 	"iid": "4259f960-8560-11f0-9b06-fbc946e57f6b",
 	"jsonVersion": "1.5.3",
 	"appBuildId": 473703,
-	"nextUid": 14,
+	"nextUid": 17,
 	"identifierStyle": "Free",
 	"toc": [],
 	"worldLayout": null,
@@ -113,7 +113,7 @@
 			"fieldDefs": []
 		},
 		{
-			"identifier": "collision_slope",
+			"identifier": "collision_slope_left",
 			"uid": 10,
 			"tags": ["collision"],
 			"exportToToc": false,
@@ -138,7 +138,42 @@
 			"tilesetId": 5,
 			"tileRenderMode": "Stretch",
 			"tileRect": { "tilesetUid": 5, "x": 16, "y": 0, "w": 16, "h": 16 },
-			"uiTileRect": { "tilesetUid": 4, "x": 0, "y": 0, "w": 0, "h": 0 },
+			"uiTileRect": null,
+			"nineSliceBorders": [],
+			"maxCount": 0,
+			"limitScope": "PerLevel",
+			"limitBehavior": "MoveLastOne",
+			"pivotX": 0,
+			"pivotY": 0,
+			"fieldDefs": []
+		},
+		{
+			"identifier": "collision_slope_right",
+			"uid": 16,
+			"tags": ["collision"],
+			"exportToToc": false,
+			"allowOutOfBounds": true,
+			"doc": null,
+			"width": 16,
+			"height": 16,
+			"resizableX": true,
+			"resizableY": true,
+			"minWidth": 16,
+			"maxWidth": null,
+			"minHeight": 16,
+			"maxHeight": null,
+			"keepAspectRatio": false,
+			"tileOpacity": 1,
+			"fillOpacity": 0,
+			"lineOpacity": 0,
+			"hollow": false,
+			"color": "#00FF00",
+			"renderMode": "Tile",
+			"showName": false,
+			"tilesetId": 5,
+			"tileRenderMode": "Stretch",
+			"tileRect": { "tilesetUid": 5, "x": 0, "y": 16, "w": 16, "h": 16 },
+			"uiTileRect": null,
 			"nineSliceBorders": [],
 			"maxCount": 0,
 			"limitScope": "PerLevel",
@@ -220,13 +255,13 @@
 	], "tilesets": [
 		{
 			"__cWid": 2,
-			"__cHei": 1,
+			"__cHei": 2,
 			"identifier": "collision",
 			"uid": 5,
 			"relPath": "../../../../BonkoAssets/sprites/TileSets/GenericBlocks/collision/collision.png",
 			"embedAtlas": null,
 			"pxWid": 32,
-			"pxHei": 16,
+			"pxHei": 32,
 			"tileGridSize": 16,
 			"spacing": 0,
 			"padding": 0,
@@ -235,7 +270,7 @@
 			"enumTags": [],
 			"customData": [],
 			"savedSelections": [],
-			"cachedPixelData": { "opaqueTiles": "00", "averageColors": "62d042d0" }
+			"cachedPixelData": { "opaqueTiles": "0000", "averageColors": "62d042d042d00000" }
 		},
 		{
 			"__cWid": 1,
@@ -418,7 +453,7 @@
 								"__worldY": 144
 							},
 							{
-								"__identifier": "collision_slope",
+								"__identifier": "collision_slope_left",
 								"__grid": [32,9],
 								"__pivot": [0,0],
 								"__tags": ["collision"],
@@ -434,7 +469,7 @@
 								"__worldY": 144
 							},
 							{
-								"__identifier": "collision_slope",
+								"__identifier": "collision_slope_left",
 								"__grid": [34,8],
 								"__pivot": [0,0],
 								"__tags": ["collision"],
@@ -479,6 +514,22 @@
 								"px": [80,144],
 								"fieldInstances": [],
 								"__worldX": 400,
+								"__worldY": 144
+							},
+							{
+								"__identifier": "collision_slope_right",
+								"__grid": [6,9],
+								"__pivot": [0,0],
+								"__tags": ["collision"],
+								"__tile": { "tilesetUid": 5, "x": 0, "y": 16, "w": 16, "h": 16 },
+								"__smartColor": "#00FF00",
+								"iid": "f5110110-8560-11f0-a416-9fd029c9c59f",
+								"width": 64,
+								"height": 16,
+								"defUid": 16,
+								"px": [96,144],
+								"fieldInstances": [],
+								"__worldX": 416,
 								"__worldY": 144
 							}
 						]

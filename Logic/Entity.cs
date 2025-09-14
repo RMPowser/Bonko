@@ -1,75 +1,50 @@
-﻿using Microsoft.Xna.Framework;
-using Graphics;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Content;
+﻿using Logic.Components;
+using System.Collections.Generic;
 
 namespace Logic
 {
 	public class Entity
 	{
-		public string Name { get; }
-		public string LayerName { get; set; }
-		public Rectangle? CollisionRect { get; set; }
-		bool IsVisible { get; set; }
-		public Vector2 Position
-		{
-			get
-			{
-				return Sprite.Position;
-			}
-			set
-			{
-				Sprite.Position = value;
-			}
-		}
-		public Vector2 Scale
-		{
-			get
-			{
-				return Sprite.Scale;
-			}
-			set
-			{
-				Sprite.Scale = value;
-			}
-		}
-		public float Rotation
-		{
-			get
-			{
-				return Sprite.Rotation;
-			}
-			set
-			{
-				Sprite.Rotation = value;
-			}
-		}
+		public string Name { get; set; }
+		private List<BaseComponent> Components;
 
-		protected AnimatedSprite? Sprite;
-		protected TextureAtlas? TextureAtlas;
-
-		protected ContentManager ContentManager;
-
-		public Entity(string name, string layerName, Rectangle? collisionRect = null) 
+		public Entity(string name) 
 		{
 			Name = name;
-			LayerName = layerName;
-			CollisionRect = collisionRect;
-			IsVisible = true;
-			ContentManager = new(Core.Content.ServiceProvider, Core.Content.RootDirectory);
+			Components = [];
 		}
 
-		public virtual void Update(GameTime gameTime)
+		public virtual void AddComponent(BaseComponent component)
 		{
-			// do nothing by default
+			Components.Add(component);
 		}
 
-		public virtual void Draw(SpriteBatch spriteBatch)
+		public virtual void RemoveComponent(BaseComponent component)
 		{
-			if (IsVisible)
+			Components.Remove(component);
+		}
+
+		public T? GetComponent<T>() where T : BaseComponent
+		{
+			foreach (BaseComponent component in Components)
 			{
-				Sprite?.Draw(spriteBatch);
+				if (component.GetType() == typeof(T))
+				{
+					return (T)component;
+				}
 			}
+
+			return null;
+		}
+
+		public virtual void Unload()
+		{
+			foreach (var comp in Components)
+			{
+				comp.Unload();
+			}
+
+			Components = [];
 		}
 	}
 }
