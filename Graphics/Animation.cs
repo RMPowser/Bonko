@@ -7,13 +7,13 @@ namespace Graphics
 {
 	public class Animation
 	{
+		public string Name { get; private set; }
 		public List<TextureRegion> Frames {  get; set; }
-		public TimeSpan MillisecondsBetweenFrames { get; set; }
 
-		public Animation(List<TextureRegion>? frames = null, TimeSpan? millisecondsBetweenFrames = null)
+		public Animation(string name, List<TextureRegion> frames)
 		{
+			Name = name;
 			Frames = frames ?? [];
-			MillisecondsBetweenFrames = millisecondsBetweenFrames ?? TimeSpan.FromMilliseconds(100);
 		}
 	}
 }

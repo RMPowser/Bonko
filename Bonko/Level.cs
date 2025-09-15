@@ -10,14 +10,14 @@ namespace Bonko
 	{
 		private List<Room> Rooms;
 		
-		public Level(string name, LDtkLevel[] rooms)
-			: base(name)
+		public Level(LDtkWorld level)
+			: base(level.Identifier)
 		{
 			Rooms = [];
 
-			foreach (var room in rooms)
+			foreach (var room in level.Levels)
 			{
-				Rooms.Add(new Room(room.Identifier, new Vector2(room.WorldX, room.WorldY), room.LayerInstances));
+				Rooms.Add(new Room(room));
 			}
 		}
 

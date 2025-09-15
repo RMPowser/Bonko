@@ -5,33 +5,35 @@ using Graphics;
 using System.Collections.Generic;
 using Logic.Interfaces;
 using Logic.ComponentSystems;
+using Microsoft.Xna.Framework.Content;
+using System.Linq;
 
 namespace Logic.Components
 {
 	public class AnimatedSpriteComponent : BaseComponent, IUpdateableComponent, IDrawableComponent
 	{
 		private TimeSpan ElapsedTime;
-		public int CurrFrame { get; set; }
+		public int image_index { get; set; }
 		public Dictionary<string, Animation> Animations { get; private set; }
-		public Animation? CurrAnimation { get; private set; }
+		public Animation CurrAnimation { get; private set; }
+		public int sprite_index;
 		public Color Color { get; set; }
 		public SpriteEffects Effects { get; set; }
+		private readonly ContentManager ContentManager;
+		public float image_speed { get; set; }
 
-
-		public AnimatedSpriteComponent(
-			Entity ent,
-			int? currFrame = null,
-			Dictionary<string, Animation>? animations = null, 
-			Animation? currAnimation = null,
-			Color? color = null,
-			SpriteEffects? effects = null)
+		public AnimatedSpriteComponent(Entity ent, string textureAtlasJsonFilePath)
 			: base(ent)
 		{
-			CurrFrame = currFrame ?? 0;
-			Animations = animations ?? [];
-			CurrAnimation = currAnimation;
-			Color = color ?? Color.White;
-			Effects = effects ?? SpriteEffects.None;
+			ContentManager = new(Core.Content.ServiceProvider, Core.Content.RootDirectory);
+
+			TextureAtlas atlas = new(ContentManager, textureAtlasJsonFilePath);
+			Animations = atlas.GetAllAnimations();
+			image_index = 0;
+			CurrAnimation = Animations.First().Value;
+			Color = Color.White;
+			Effects = SpriteEffects.None;
+			image_speed = 1;
 
 			UpdateableComponentSystem.Register(this);
 			DrawableComponentSystem.Register(this);
@@ -40,22 +42,40 @@ namespace Logic.Components
 		public void ChangeAnimation(string animName)
 		{
 			CurrAnimation = Animations[animName];
+			image_index = 0;
+		}
+
+		public void ChangeAnimation(int animIndex)
+		{
+			CurrAnimation = Animations.Values.ToList()[animIndex];
+			image_index = 0;
+		}
+
+		public int GetAnimationIndex()
+		{
+			return Animations.Keys.ToList().IndexOf(CurrAnimation.Name);
 		}
 
 		public void Update(GameTime gameTime)
 		{
 			if (CurrAnimation != null)
 			{
-				ElapsedTime += gameTime.ElapsedGameTime;
+				ElapsedTime += gameTime.ElapsedGameTime * Math.Abs(image_speed);
 
-				if (ElapsedTime >= CurrAnimation.MillisecondsBetweenFrames)
+				if (ElapsedTime >= CurrAnimation.Frames[image_index].Duration)
 				{
-					ElapsedTime -= CurrAnimation.MillisecondsBetweenFrames;
-					CurrFrame++;
+					ElapsedTime -= CurrAnimation.Frames[image_index].Duration;
 
-					if (CurrFrame >= CurrAnimation.Frames.Count)
+					bool backwards = image_speed < 0;
+					image_index += backwards ? -1 : 1;
+
+					if (backwards && image_index < 0)
 					{
-						CurrFrame = 0;
+						image_index = CurrAnimation.Frames.Count - 1;
+					}
+					else if (!backwards && image_index >= CurrAnimation.Frames.Count)
+					{
+						image_index = 0;
 					}
 				}
 			}
@@ -65,7 +85,7 @@ namespace Logic.Components
 		{
 			var transform = entity.GetComponent<TransformComponent>();
 
-			CurrAnimation?.Frames[CurrFrame].Draw(
+			CurrAnimation?.Frames[image_index].Draw(
 					spriteBatch,
 					transform?.Position ?? Vector2.Zero,
 					Color,

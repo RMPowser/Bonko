@@ -7,30 +7,30 @@ using Logic;
 
 namespace Bonko
 {
-	public class Room
+	public class Room : Entity
 	{
-		public string Name { get; }
 		protected List<Layer> Layers;
-		private readonly LayerInstance[]? LayersOnDisk;
-		public Vector2 WorldPosition { get; }
+		private readonly LDtkLevel ldtkLevel;
+		public Vector2 WorldPosition { get; private set; }
+		public Vector2 Size { get; private set; }
 		public bool IsLoaded { get; private set; }
 
-		public Room(string name, Vector2 worldPosition, LayerInstance[]? layers = null)
+		public Room(LDtkLevel room)
+			: base(room.Identifier)
 		{
-			Name = name;
 			Layers = [];
-			LayersOnDisk = layers;
-			WorldPosition = worldPosition;
+			ldtkLevel = room;
+			WorldPosition = new(ldtkLevel.WorldX, ldtkLevel.WorldY);
 			IsLoaded = false;
 		}
 
 		public virtual void Load()
 		{
-			if (LayersOnDisk != null)
+			if (ldtkLevel != null)
 			{
-				foreach (var layer in LayersOnDisk)
+				foreach (var layer in ldtkLevel.LayerInstances!)
 				{
-					Layers.Add(new Layer(layer._Identifier, WorldPosition, 0, layer.EntityInstances));
+					Layers.Add(new Layer(layer, WorldPosition));
 				}
 			}
 
@@ -45,7 +45,7 @@ namespace Bonko
 			layer.AddObject(obj);
 		}
 
-		public virtual void Unload()
+		public override void Unload()
 		{
 			foreach (var layer in Layers)
 			{
@@ -54,6 +54,8 @@ namespace Bonko
 
 			Layers = [];
 			IsLoaded = false;
+
+			base.Unload();
 		}
 	}
 }

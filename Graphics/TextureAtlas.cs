@@ -16,6 +16,7 @@ namespace Graphics
 
 		public TextureAtlas(ContentManager content, string filePath)
 		{
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
 			Regions = [];
 			Animations = [];
 
@@ -50,39 +51,40 @@ namespace Graphics
 
 			Texture = content.Load<Texture2D>(imagePath);
 
-			var frames = file["frames"].AsArray();
-			foreach (var frame in frames)
+			var regions = file["frames"].AsArray();
+			foreach (var region in regions)
 			{
 				AddRegion(
-					frame["filename"].GetValue<string>(),
-					frame["frame"]["x"].GetValue<int>(),
-					frame["frame"]["y"].GetValue<int>(),
-					frame["frame"]["w"].GetValue<int>(),
-					frame["frame"]["h"].GetValue<int>()
+					region["filename"].GetValue<string>(),
+					region["frame"]["x"].GetValue<int>(),
+					region["frame"]["y"].GetValue<int>(),
+					region["frame"]["w"].GetValue<int>(),
+					region["frame"]["h"].GetValue<int>(),
+					region["duration"].GetValue<int>()
 				);
 			}
 
 			var animations = file["meta"]["frameTags"].AsArray();
 			foreach (var anim in animations)
 			{
-				Animation spr = new();
+				List<TextureRegion> frames = [];
 				int from = anim["from"].GetValue<int>();
 				int to = anim["to"].GetValue<int>();
 				string name = anim["name"].GetValue<string>();
 				for (int i = from; i <= to; i++)
 				{
 					string key = name + "_" + (i - from).ToString();
-					spr.Frames.Add(GetRegion(key));
+					frames.Add(GetRegion(key));
 				}
-
-				AddAnimation(name, spr);
+				AddAnimation(new(name, frames));
 			}
+#pragma warning restore CS8602
 		}
 
 
-		public void AddRegion(string name, int x, int y, int width, int height)
+		public void AddRegion(string name, int x, int y, int width, int height, int durationInMilliseconds)
 		{
-			Regions.Add(name, new TextureRegion(Texture, x, y, width, height));
+			Regions.Add(name, new TextureRegion(Texture, x, y, width, height, durationInMilliseconds));
 		}
 
 		public TextureRegion GetRegion(string name)
@@ -100,9 +102,9 @@ namespace Graphics
 			return Regions;
 		}
 
-		public void AddAnimation(string name, Animation animatedSprite)
+		public void AddAnimation(Animation animatedSprite)
 		{
-			Animations.Add(name, animatedSprite);
+			Animations.Add(animatedSprite.Name, animatedSprite);
 		}
 
 		public Animation GetAnimation(string name)

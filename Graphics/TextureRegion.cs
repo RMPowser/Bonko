@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 
 namespace Graphics
 {
@@ -9,16 +10,29 @@ namespace Graphics
 		public Rectangle SourceRectangle { get; set; }
 		public int Width => SourceRectangle.Width;
 		public int Height => SourceRectangle.Height;
+		public TimeSpan Duration { get; set; }
 
 
-		public TextureRegion()
-		{
-		}
-
-		public TextureRegion(Texture2D texture, int x, int y, int width, int height)
+		public TextureRegion(Texture2D texture, int x, int y, int width, int height, int durationInMilliseconds)
 		{
 			Texture = texture;
 			SourceRectangle = new Rectangle(x, y, width, height);
+			double actualValue = durationInMilliseconds;
+			switch (durationInMilliseconds)
+			{
+				case 16:
+					actualValue = (1.0 / 60.0) * 1000;
+					break;
+				case 32:
+					actualValue = (1.0 / 30.0) * 1000;
+					break;
+				case 66:
+					actualValue = (1.0 / 15.0) * 1000;
+					break;
+				default:
+					break;
+			}
+			Duration = TimeSpan.FromMilliseconds(actualValue);
 		}
 
 		public void Draw(

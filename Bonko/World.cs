@@ -32,7 +32,7 @@ namespace Bonko
 
 			foreach (var level in WorldFile.Worlds)
 			{
-				Levels.Add(new Level(level.Identifier, level.Levels));
+				Levels.Add(new Level(level));
 			}
 		}
 
@@ -43,12 +43,7 @@ namespace Bonko
 			string levelName = roomNameComponents[0];
 
 			Level? level = Levels.Find(x => x.Name == levelName);
-			if (level != null)
-			{
-				return level.GetRoom(name);
-			}
-
-			throw new Exception($"Level not found with name \"{levelName}\".");
+			return level?.GetRoom(name) ?? throw new Exception($"Level not found with name \"{levelName}\".");
 		}
 
 		public void Reload()
@@ -64,7 +59,7 @@ namespace Bonko
 
 			foreach (var level in WorldFile.Worlds)
 			{
-				Levels.Add(new Level(level.Identifier, level.Levels));
+				Levels.Add(new Level(level));
 			}
 		}
 	}

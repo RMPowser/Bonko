@@ -1,15 +1,20 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Input;
+using Logic;
+using Logic.ComponentSystems;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using Logic;
-using Input;
-using Graphics;
-using Logic.ComponentSystems;
+using System;
 
 namespace Bonko;
 
 public class GameApplication : Core
 {
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
+	internal static GameApplication instance;
+	public static new GameApplication Instance => instance;
+#pragma warning restore CS8618
+
 	private World World;
 	private Room CurrRoom;
 	private Room? NextRoom;
@@ -19,20 +24,25 @@ public class GameApplication : Core
 	private Effect PixelFilterShader;
 	private int GameScale;
 	private const int MinGameScale = 1;
-	private int MaxGameScale = 10;
+	private int MaxGameScale;
 	private const int DefaultGameScale = 4;
 	public const int NativeResolutionWidth = 320;
 	public const int NativeResolutionHeight = 176;
+	//public bool IsRoomTransitionInProgress { get; private set; }
 
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
 	public GameApplication()
 #pragma warning restore CS8618
 		: base("Bonko", NativeResolutionWidth, NativeResolutionHeight, false, true)
 	{
+		instance = this;
+
 		IsFixedTimeStep = false;
 		Window.AllowUserResizing = true;
 		UsePixelFiltering = true;
 		GameScale = 1;
+		MaxGameScale = 10;
+		//IsRoomTransitionInProgress = false;
 	}
 
 	protected override void Initialize()

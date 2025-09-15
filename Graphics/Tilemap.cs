@@ -65,14 +65,5 @@ namespace Graphics
 				tile.Draw(spriteBatch, position, Color.White, 0.0f, Vector2.Zero, Scale, SpriteEffects.None, 1.0f);
 			}
 		}
-
-		public static TileMap FromLDtkJsonFile(ContentManager content, string filePath)
-		{
-			LDtkFile file = content.Load<LDtkFile>(filePath);
-
-
-
-			return new TileMap(new TileSet(new TextureRegion(), 16, 16), 3, 3);
-		}
 	}
 }

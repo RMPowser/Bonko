@@ -28,6 +28,33 @@
 /processorParam:DebugMode=Auto
 /build:shaders/PixelFilter.fx
 
+#begin sprites/Player/Bonko.json
+/copy:sprites/Player/Bonko.json
+
+#begin sprites/Player/Bonko.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:sprites/Player/Bonko.png;sprites/Player/Bonko
+
+#begin sprites/Player/Bonko.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:sprites/Player/Bonko.png
+
 #begin sprites/TileSets/GenericBlocks/collision/collision.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -38,5 +65,5 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:sprites/TileSets/GenericBlocks/collision/collision.png;sprites/TileSets/GenericBlocks/collision/collision
+/build:sprites/TileSets/GenericBlocks/collision/collision.png
 

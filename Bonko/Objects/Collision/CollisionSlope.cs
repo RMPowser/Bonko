@@ -5,7 +5,7 @@ namespace Bonko.Objects.Collision
 {
 	public class CollisionSlope : Entity
 	{
-		public CollisionSlope(string name, string layerName)
+		public CollisionSlope(string name)
 			: base(name)
 		{
 			AddComponent(new CollisionRectComponent(this, 0, 0, 16, 16));

@@ -5,7 +5,7 @@ namespace Bonko.Objects.Collision
 {
 	public class CollisionTile : Entity
 	{
-		public CollisionTile(string name, string layerName)
+		public CollisionTile(string name)
 			: base(name)
 		{
 			AddComponent(new CollisionRectComponent(this, 0, 0, 16, 16));

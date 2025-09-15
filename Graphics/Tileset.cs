@@ -25,7 +25,7 @@ namespace Graphics
 			{
 				int x = i % Columns * tileWidth;
 				int y = i / Columns * tileHeight;
-				Tiles[i] = new TextureRegion(textureRegion.Texture, textureRegion.SourceRectangle.X + x, textureRegion.SourceRectangle.Y + y, tileWidth, tileHeight);
+				Tiles[i] = new TextureRegion(textureRegion.Texture, textureRegion.SourceRectangle.X + x, textureRegion.SourceRectangle.Y + y, tileWidth, tileHeight, 0);
 			}
 		}
 

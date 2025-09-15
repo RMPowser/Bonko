@@ -11,44 +11,49 @@ namespace Bonko
 	{
 		protected List<Entity> Objects;
 
-		public Layer(string name, Vector2 roomWorldPosition, float layerDepth, EntityInstance[] entities)
-			: base(name)
+		public Layer(LDtk.LayerInstance layerInstance, Vector2 roomWorldPosition)
+			: base(layerInstance._Identifier)
 		{
-			AddComponent(new TransformComponent(this, default, default, layerDepth));
 			Objects = [];
 
-			foreach (var obj in entities)
+			foreach (var obj in layerInstance.EntityInstances)
 			{
+				Entity? instance = null;
 				switch (obj._Identifier)
 				{
-					case "collision_tile":
+					case "player_spawn":
 					{
-						Entity instance = new Objects.Collision.CollisionTile(obj._Identifier, name);
+						instance = new Objects.Player.PlayerObject(obj._Identifier);
 						var transform = instance.GetComponent<TransformComponent>() ?? throw new Exception($"Missing component \"{nameof(TransformComponent)}\".");
 						transform.Position = new Vector2((float)(obj._WorldX - roomWorldPosition.X)!, (float)(obj._WorldY - roomWorldPosition.Y)!);
-						transform.Scale = new Vector2(obj.Width / obj._Tile!.W, obj.Height / obj._Tile.H);
-						Objects.Add(instance);
+						break;
+					}
+					case "collision_tile":
+					{
+						instance = new Objects.Collision.CollisionTile(obj._Identifier);
+						var transform = instance.GetComponent<TransformComponent>() ?? throw new Exception($"Missing component \"{nameof(TransformComponent)}\".");
+						transform.Position = new Vector2((float)(obj._WorldX - roomWorldPosition.X)!, (float)(obj._WorldY - roomWorldPosition.Y)!);
+						transform.Scale = new Vector2(obj.Width / (obj._Tile?.W ?? 1), obj.Height / (obj._Tile?.H ?? 1));
 						break;
 					}
 					case "collision_slope_left":
 					case "collision_slope_right":
 					{
-						Entity instance = new Objects.Collision.CollisionSlope(obj._Identifier, name);
+						instance = new Objects.Collision.CollisionSlope(obj._Identifier);
 						var transform = instance.GetComponent<TransformComponent>() ?? throw new Exception($"Missing component \"{nameof(TransformComponent)}\".");
 						transform.Position = new Vector2((float)(obj._WorldX - roomWorldPosition.X)!, (float)(obj._WorldY - roomWorldPosition.Y)!);
-						transform.Scale = new Vector2(obj.Width / obj._Tile!.W, obj.Height / obj._Tile.H);
-						Objects.Add(instance);
-						break;
-					}
-					case "player_spawn":
-					{
-
+						transform.Scale = new Vector2(obj.Width / (obj._Tile?.W ?? 1), obj.Height / (obj._Tile?.H ?? 1));
 						break;
 					}
 					default:
 					{
 						break;
 					}
+				}
+
+				if (instance != null)
+				{
+					Objects.Add(instance);
 				}
 			}
 		}
@@ -73,6 +78,8 @@ namespace Bonko
 			} while (Objects.Count > 0);
 
 			Objects = [];
+
+			base.Unload();
 		}
 	}
 }
