@@ -120,7 +120,7 @@ namespace Bonko.Objects.Player
 		int superRocketShakeFrames;
 
 		// camera
-		enum transitionTypes { left, right, up, down };
+		enum TransitionTypes { left, right, up, down };
 		object obj_camera;
 		float lerpAmountTowardsVolume;
 		float lerpAmountTowardsPlayer;
@@ -184,6 +184,13 @@ namespace Bonko.Objects.Player
 		int currentRocketAmmo;
 		int maxSuperBombAmmo;
 		int currentSuperBombAmmo;
+
+		// room transition
+		Vector2 offset;
+		Vector2 transitionHatchPos;
+		TransformComponent? targetDoorTransform;
+		string? targetRoomName;
+		TransitionTypes? transitionDirection;
 
 		public PlayerObject(string name) 
 			: base(name)
@@ -299,6 +306,12 @@ namespace Bonko.Objects.Player
 			currentRocketAmmo = 0;
 			maxSuperBombAmmo = 0;
 			currentSuperBombAmmo = 0;
+
+			offset = Vector2.Zero;
+			transitionHatchPos = Vector2.Zero;
+			targetDoorTransform = null;
+			targetRoomName = null;
+			transitionDirection = null;
 		}
 
 		public override void Unload()
@@ -322,6 +335,24 @@ namespace Bonko.Objects.Player
 
 		private void CheckForRoomTransition()
 		{
+			if (Globals.roomTransition)
+			{
+				return;
+			}
+
+			var X = transform.Position.X;
+			var Y = transform.Position.Y;
+
+#pragma warning disable CS8602 // i know the out vars are non-null if the functions returns true
+			if (CollisionRectComponentSystem.IsColliding(X + 1, Y, "teleportRight", out var r))
+			{
+				Globals.roomTransition = true;
+				offset.Y = r.Y - Y;
+				transitionHatchPos.X = r.X - Globals.viewPosX;
+				transitionHatchPos.Y = r.Y - Globals.viewPosY;
+
+			}
+#pragma warning restore CS8602
 		}
 
 		private void TickAlarms(GameTime gameTime)
