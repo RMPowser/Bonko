@@ -19,29 +19,50 @@ namespace Logic.ComponentSystems
 		public static bool IsColliding(CollisionRectComponent l, CollisionRectComponent r)
 		{
 			return
-				l.Rect.Right > r.Rect.Left &&
-				l.Rect.Left < r.Rect.Right &&
-				l.Rect.Bottom > r.Rect.Top &&
-				l.Rect.Top < r.Rect.Bottom;
+				l.Right > r.Left &&
+				l.Left < r.Right &&
+				l.Bottom > r.Top &&
+				l.Top < r.Bottom;
+		}
+
+		public static bool IsColliding(int x, int y, CollisionRectComponent rect)
+		{
+			return
+				x > rect.Left &&
+				x < rect.Right &&
+				y > rect.Top &&
+				y < rect.Bottom;
+		}
+
+		public static bool IsColliding(float x, float y, CollisionRectComponent rect)
+		{
+			return
+				x > rect.Left &&
+				x < rect.Right &&
+				y > rect.Top &&
+				y < rect.Bottom;
 		}
 
 		public static bool IsColliding(Vector2 point, CollisionRectComponent rect)
 		{
 			return
-				point.X > rect.Rect.Left &&
-				point.X < rect.Rect.Right &&
-				point.Y > rect.Rect.Top &&
-				point.Y < rect.Rect.Bottom;
+				point.X > rect.Left &&
+				point.X < rect.Right &&
+				point.Y > rect.Top &&
+				point.Y < rect.Bottom;
 		}
 
-		public static bool IsColliding(Vector2 point, string objName)
+		public static bool IsColliding(int x, int y, string objName, out CollisionRectComponent? collider)
 		{
+			collider = null;
+
 			foreach (CollisionRectComponent component in Components)
 			{
 				if (component.entity.Name == objName)
 				{
-					if (IsColliding(point, component))
+					if (IsColliding(x, y, component))
 					{
+						collider = component;
 						return true;
 					}
 				}
@@ -50,8 +71,48 @@ namespace Logic.ComponentSystems
 			return false;
 		}
 
-		public static bool IsColliding(Entity ent, string objName)
+		public static bool IsColliding(float x, float y, string objName, out CollisionRectComponent? collider)
 		{
+			collider = null;
+
+			foreach (CollisionRectComponent component in Components)
+			{
+				if (component.entity.Name == objName)
+				{
+					if (IsColliding(x, y, component))
+					{
+						collider = component;
+						return true;
+					}
+				}
+			}
+
+			return false;
+		}
+
+		public static bool IsColliding(Vector2 point, string objName, out CollisionRectComponent? collider)
+		{
+			collider = null;
+
+			foreach (CollisionRectComponent component in Components)
+			{
+				if (component.entity.Name == objName)
+				{
+					if (IsColliding(point, component))
+					{
+						collider = component;
+						return true;
+					}
+				}
+			}
+
+			return false;
+		}
+
+		public static bool IsColliding(Entity ent, string objName, out CollisionRectComponent? collider)
+		{
+			collider = null;
+
 			var collisionRect = ent.GetComponent<CollisionRectComponent>();
 			if (collisionRect == null)
 			{
@@ -66,6 +127,7 @@ namespace Logic.ComponentSystems
 					{
 						if (IsColliding(collisionRect, component))
 						{
+							collider = component;
 							return true;
 						}
 					}

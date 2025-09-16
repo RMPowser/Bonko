@@ -13,7 +13,7 @@ namespace Logic.Components
 		private bool IsVisible;
 		private Texture2D Texture;
 		private Rectangle _rect;
-		public Rectangle Rect
+		private Rectangle Rect
 		{
 			get
 			{
@@ -33,6 +33,38 @@ namespace Logic.Components
 				_rect = value;
 			}
 		}
+
+		public int X
+		{
+			get { return Rect.X; }
+			set { _rect.X = value; }
+		}
+
+		public int Y
+		{
+			get { return Rect.Y; }
+			set { _rect.Y = value; }
+		}
+
+		public int Width
+		{
+			get { return Rect.Width; }
+			set { _rect.Width = value; }
+		}
+
+		public int Height
+		{
+			get { return Rect.Height; }
+			set { _rect.Height = value; }
+		}
+
+		public int Left => Rect.Left;
+		public int Right => Rect.Right;
+		public int Top => Rect.Top;
+		public int Bottom => Rect.Bottom;
+		public Vector2 Position => Rect.Location.ToVector2();
+		public Vector2 Size => Rect.Size.ToVector2();
+		public Vector2 Center => new(X + Width / 2, Y + Height / 2);
 
 		public CollisionRectComponent(Entity ent, int x, int y, int w, int h) 
 			: base(ent)
