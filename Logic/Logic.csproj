@@ -10,5 +10,6 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Graphics\Graphics.csproj" />
+    <ProjectReference Include="..\Input\Input.csproj" />
   </ItemGroup>
 </Project>

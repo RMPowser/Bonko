@@ -5,12 +5,41 @@ namespace Logic.Components
 {
 	public class TransformComponent : BaseComponent
 	{
-		public Vector2 Position { get; set; } = Vector2.Zero;
-		public Vector2 Scale { get; set; } = Vector2.One;
-		public float Depth { get; set; } = 0.0f;
-		public float Rotation { get; set; } = 0.0f;
-		public Vector2 Origin { get; set; } = Vector2.Zero;
-		
+		private Vector2 _position;
+
+		public Vector2 Position
+		{ 
+			get 
+			{ 
+				return _position - Origin; 
+			} 
+			set => _position = value; 
+		}
+
+		public Vector2 Scale 
+		{ 
+			get;
+			set;
+		}
+
+		public float Depth 
+		{ 
+			get;
+			set;
+		}
+
+		public float Rotation 
+		{ 
+			get;
+			set;
+		}
+
+		public Vector2 Origin 
+		{ 
+			get;
+			set;
+		}
+
 		public TransformComponent(
 			Entity ent, 
 			Vector2? pos = null, 

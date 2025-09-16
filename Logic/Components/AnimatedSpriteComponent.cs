@@ -90,7 +90,7 @@ namespace Logic.Components
 					transform?.Position ?? Vector2.Zero,
 					Color,
 					transform?.Rotation ?? 0,
-					transform?.Origin ?? Vector2.Zero,
+					Vector2.Zero,
 					transform?.Scale ?? Vector2.One,
 					Effects,
 					transform?.Depth ?? 0);
