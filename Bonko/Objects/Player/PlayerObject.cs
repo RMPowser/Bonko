@@ -209,7 +209,7 @@ namespace Bonko.Objects.Player
 			
 			UpdateableComponentSystem.Register(this);
 
-			idle = false;
+			idle = true;
 			walking = false;
 			jumping = false;
 			spinning = false;
